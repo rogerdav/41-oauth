@@ -34,7 +34,6 @@ module.exports = function(router) {
           const token = tokenRes.body.access_token;
           return superagent.get(OPEN_ID_URL)
             .set('Authorization', `Bearer ${token}`);
-
         })
         .then(openIDResponse => {
           let userFromGoogle = {
@@ -42,18 +41,11 @@ module.exports = function(router) {
             email: openIDResponse.body.email,
           };
           let user = new Auth(userFromGoogle);
-          console.log('auth', user);
-          // console.log('open id user', user);
           return  user.generateToken()
             .then(token => {
-              console.log('user token', token);
               res.cookie('X-401d21-OAuth-Token', `${token}`);
               res.redirect(process.env.CLIENT_URL);
-              
             });
-
-
-
         })
         .catch(error => {
           console.log('__ERROR__', error.message);
